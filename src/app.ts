@@ -1,38 +1,32 @@
-interface ITodo {
-  description : string,
-  done : boolean,
-}
 
+import { Router, RouterConfiguration } from 'aurelia-router';
+import { PLATFORM, inject } from "aurelia-framework";
+
+
+import { WebAPI } from "./assets/web-api";
+
+@inject(WebAPI)
 export class App {
-  heading: string;
-  todos: ITodo[];
-  todoDescription: string;
+  router: Router;
 
+  constructor(private api : WebAPI) { }
+  configureRouter(config: RouterConfiguration, router: Router) {
+    config.title = "Contacts";
+    config.options.pushState = true;
+    config.options.root = "/";
+    config.map([
+      {
+        route: "",
+        moduleId: PLATFORM.moduleName("no-selection"),
+        title: "Select",
+      },
+      {
+        route: "contacts/:id",
+        moduleId: PLATFORM.moduleName("contact-detail"),
+        name: "contacts",
+      },
+    ]);
 
-  constructor() {
-    this.heading = 'Todos';
-    this.todos = [];
-    this.todoDescription = '';
+    this.router = router;
   }
-
-  addTodo(): void {
-    if(this.todoDescription){
-      this.todos.push({
-        description: this.todoDescription,
-        done: false
-      });
-    }
-
-    this.todoDescription = '';
-  }
-
-
-  removeTodo(todo: ITodo): void {
-    const index = this.todos.indexOf(todo);
-    if(index !== -1){
-      this.todos.splice(index, 1);
-    }
-  }
-
-
 }
